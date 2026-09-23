@@ -5020,13 +5020,14 @@ class DiscordAdapter(DiscordMediaMixin, BasePlatformAdapter):
         Slack parity (``slack.ignore_other_user_mentions``). When enabled, a channel message
         that @-mentions another user/bot without also mentioning us is dropped, so a
         free-response channel does not turn into the bot answering other people's
-        conversations. Default False: free-response channels stay fully free-response.
+        conversations. Default True: free-response means "answer everything except messages
+        addressed to somebody else". Set False to answer those too.
 
         Config: ``discord.ignore_other_user_mentions`` (or env
         ``DISCORD_IGNORE_OTHER_USER_MENTIONS``).
         """
         return self._extra_or_env_flag(
-            "ignore_other_user_mentions", "DISCORD_IGNORE_OTHER_USER_MENTIONS", "false", truthy=True
+            "ignore_other_user_mentions", "DISCORD_IGNORE_OTHER_USER_MENTIONS", "true", truthy=True
         )
 
     def _discord_message_addressed_to_other_user(

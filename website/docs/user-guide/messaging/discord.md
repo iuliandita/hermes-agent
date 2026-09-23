@@ -361,7 +361,7 @@ discord:
   ignore_other_user_mentions: true
 ```
 
-A message is skipped when it @mentions another user or bot and does **not** mention the bot; a message that mentions both still reaches it. Because Discord tags people anywhere in the line rather than only at the start, any non-self mention counts. `@everyone` and `@here` address the room, not a person, and never trigger the skip. Threads the bot has already joined are exempt, so a third-party mention mid-conversation does not mute it. Default `false`: free-response channels stay fully free-response. Slack's `slack.ignore_other_user_mentions` behaves the same way.
+A message is skipped when it @mentions another user or bot and does **not** mention the bot; a message that mentions both still reaches it. Because Discord tags people anywhere in the line rather than only at the start, any non-self mention counts. `@everyone` and `@here` address the room, not a person, and never trigger the skip. Threads the bot has already joined are exempt, so a third-party mention mid-conversation does not mute it. Default `true`: a free-response channel answers everything *except* messages addressed to somebody else. Set it to `false` for a channel that should answer absolutely everything, including other people's conversations. Slack's `slack.ignore_other_user_mentions` behaves the same way but defaults to `false`.
 
 ### Config File (`config.yaml`)
 
@@ -373,7 +373,7 @@ discord:
   require_mention: true           # Require @mention in server channels
   thread_require_mention: false   # If true, require @mention in threads too (multi-bot threads)
   bots_require_inline_mention: true  # Bot authors must type a literal @mention (default: true)
-  ignore_other_user_mentions: false  # In free-response channels, skip messages that @mention someone else (default: false)
+  ignore_other_user_mentions: true   # In free-response channels, skip messages that @mention someone else (default: true)
   free_response_channels: ""      # Comma-separated channel IDs (or YAML list)
   auto_thread: true               # Auto-create threads on @mention
   free_response_auto_thread: false # If true, free_response_channels also auto-thread (default: inline)

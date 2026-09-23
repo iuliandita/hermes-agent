@@ -66,14 +66,19 @@ def _message(content, *, mentions=(), channel=None):
 # _discord_ignore_other_user_mentions() default
 # ---------------------------------------------------------------------------
 
-def test_ignore_other_user_mentions_defaults_off(monkeypatch):
+def test_ignore_other_user_mentions_defaults_on(monkeypatch):
     monkeypatch.delenv("DISCORD_IGNORE_OTHER_USER_MENTIONS", raising=False)
-    assert _adapter()._discord_ignore_other_user_mentions() is False
+    assert _adapter()._discord_ignore_other_user_mentions() is True
 
 
-def test_ignore_other_user_mentions_reads_extra(monkeypatch):
+def test_ignore_other_user_mentions_can_be_disabled(monkeypatch):
     monkeypatch.delenv("DISCORD_IGNORE_OTHER_USER_MENTIONS", raising=False)
-    assert _adapter(ignore_other_user_mentions=True)._discord_ignore_other_user_mentions() is True
+    assert _adapter(ignore_other_user_mentions=False)._discord_ignore_other_user_mentions() is False
+
+
+def test_ignore_other_user_mentions_env_wins(monkeypatch):
+    monkeypatch.setenv("DISCORD_IGNORE_OTHER_USER_MENTIONS", "false")
+    assert _adapter(ignore_other_user_mentions=True)._discord_ignore_other_user_mentions() is False
 
 
 # ---------------------------------------------------------------------------
@@ -156,31 +161,32 @@ async def _run(adapter, message):
 
 
 @pytest.mark.asyncio
-async def test_free_response_answers_untagged_message_when_gate_off():
+@pytest.mark.asyncio
+async def test_free_response_answers_untagged_message_by_default():
     adapter = _adapter()
     assert await _run(adapter, _message("no tag here")) == 1
 
 
 @pytest.mark.asyncio
-async def test_free_response_answers_untagged_message_when_gate_on():
-    adapter = _adapter(ignore_other_user_mentions=True)
+async def test_free_response_answers_untagged_message_when_gate_off():
+    adapter = _adapter(ignore_other_user_mentions=False)
     assert await _run(adapter, _message("no tag here")) == 1
 
 
 @pytest.mark.asyncio
-async def test_gate_on_drops_message_addressed_to_another_user():
-    adapter = _adapter(ignore_other_user_mentions=True)
+async def test_default_drops_message_addressed_to_another_user():
+    adapter = _adapter()
     assert await _run(adapter, _message(f"<@{OTHER_USER_ID}> take a look")) == 0
 
 
 @pytest.mark.asyncio
 async def test_gate_off_still_answers_message_addressed_to_another_user():
-    adapter = _adapter()
+    adapter = _adapter(ignore_other_user_mentions=False)
     assert await _run(adapter, _message(f"<@{OTHER_USER_ID}> take a look")) == 1
 
 
 @pytest.mark.asyncio
-async def test_gate_on_answers_when_bot_is_also_tagged():
-    adapter = _adapter(ignore_other_user_mentions=True)
+async def test_default_answers_when_bot_is_also_tagged():
+    adapter = _adapter()
     assert await _run(
         adapter, _message(f"<@{OTHER_USER_ID}> and <@{BOT_ID}> compare")) == 1

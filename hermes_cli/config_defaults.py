@@ -1519,10 +1519,9 @@ DEFAULT_CONFIG = {
         # Set False only for trusted legacy relays. Humans are unaffected.
         "bots_require_inline_mention": True,
         # In free-response channels, skip messages that @mention another user/bot without also
-        # mentioning us (they are addressed to that person, not to us). Slack parity. Default
-        # False keeps free-response channels fully free-response. Env:
+        # mentioning us (they are addressed to that person, not to us). Slack parity. Env:
         # DISCORD_IGNORE_OTHER_USER_MENTIONS.
-        "ignore_other_user_mentions": False,
+        "ignore_other_user_mentions": True,
         # Prepend recent channel scrollback when triggered (recovers messages gated out by
         # require_mention); limit = max messages scanned.
         "history_backfill": True,
